@@ -18,6 +18,7 @@
 *.zip
 *.tar.gz
 *.rar
+.project
 
 # Mac Files #
 .DS_Store
