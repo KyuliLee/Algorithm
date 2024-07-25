@@ -11,6 +11,7 @@ class Solution
 		T=sc.nextInt();
 		sc.nextLine();
 
+		// 방법 1
 		for(int test_case = 1; test_case <= T; test_case++)
 		{
 			String str = sc.nextLine();
@@ -36,7 +37,27 @@ class Solution
                     }
                 }
             }
+		}
+		// 방법 2
+		for(int test_case = 1; test_case <= T; test_case++)
+		{
+			String str = sc.nextLine();
+            StringBuilder sb = new StringBuilder(str);
+            String strRev = sb.reverse().toString();
+            int len = str.length();
             
+            int i=0;
+            while (i < len/2) {
+            	if(str.charAt(i) == strRev.charAt(i)) {
+                	i++;
+                } else {
+                 	System.out.println("#"+test_case+" 0");
+                    break;
+                }
+            }
+            if (i == len/2) {
+            	System.out.println("#"+test_case+" 1");
+            }
 		}
 	}
 }
