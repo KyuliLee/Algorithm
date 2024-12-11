@@ -1,6 +1,6 @@
 import java.util.*;
 
-class Solution {
+class PGS_전화번호_목록 {
     public boolean solution(String[] phone_book) {
         Map<String, Integer> map = new HashMap<>();
 		for(int i=0; i<phone_book.length; i++) {

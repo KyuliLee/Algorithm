@@ -1,6 +1,6 @@
 package week8;
 
-class Solution {
+class PGS_타겟_넘버 {
     private static int sum = 0;
     private static int depth = 0;
     private static int cnt = 0;

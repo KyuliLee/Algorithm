@@ -1,6 +1,6 @@
 import java.util.*;
 
-class Solution {
+class PGS_K번째수 {
     public int[] solution(int[] array, int[][] commands) {
         int[] answer = new int[commands.length];
         

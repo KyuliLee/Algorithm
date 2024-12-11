@@ -1,4 +1,4 @@
-class Solution {
+class PGS_정수를_나선형으로_배치하기 {
     public int[][] solution(int n) {
         int[][] answer = new int[n][n];
         answer[0][0] = 1;

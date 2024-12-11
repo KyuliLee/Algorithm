@@ -1,6 +1,7 @@
+package week8;
 import java.util.*;
 
-class Solution {
+public class PGS_모음사전 {
     
     private static char[] alp = {'A', 'E', 'I', 'O', 'U'};
     private static int cnt = 0;

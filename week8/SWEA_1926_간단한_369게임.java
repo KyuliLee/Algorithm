@@ -1,6 +1,6 @@
 import java.util.*;
 
-class Solution
+class SWEA_1926_간단한_369게임
 {
 	public static void main(String args[]) throws Exception
 	{

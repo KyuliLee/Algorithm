@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
-public class Main {
+public class BOJ_2750_수_정렬하기 {
 
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -36,17 +36,17 @@ public class Main {
 			}
 		}
 		// 3. 카운팅 정렬 활용.. 으로도 해보기
-		boolean[] arr = new boolean[2001];
-		StringBuilder sb = new StringBuilder("");
-		for(int i=0; i<N; i++) {
-			int n = Integer.parseInt(br.readLine());
-			arr[n+1000] = true;
-		}
-		for(int i=0; i<2001; i++) {
-			if(arr[i]){
-				sb.append(i-1000).append("\n");
-			}
-		}
+//		boolean[] arr = new boolean[2001];
+//		StringBuilder sb = new StringBuilder("");
+//		for(int i=0; i<N; i++) {
+//			int n = Integer.parseInt(br.readLine());
+//			arr[n+1000] = true;
+//		}
+//		for(int i=0; i<2001; i++) {
+//			if(arr[i]){
+//				sb.append(i-1000).append("\n");
+//			}
+//		}
 		
 
 //		System.out.println(sb);

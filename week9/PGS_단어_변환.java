@@ -1,4 +1,4 @@
-class Solution {
+class PGS_단어_변환 {
     
     private static int result = 51;
     private static boolean[] visited;

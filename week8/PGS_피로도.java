@@ -1,6 +1,6 @@
 package week8;
 
-class Solution {
+class PGS_피로도 {
     
     private static boolean[] visited;
     private static int max = 0;

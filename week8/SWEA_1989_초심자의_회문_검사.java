@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.FileInputStream;
 
-class Solution
+class SWEA_1989_초심자의_회문_검사
 {
 	public static void main(String args[]) throws Exception
 	{

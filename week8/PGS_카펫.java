@@ -1,5 +1,5 @@
 package week8;
-class Solution {
+class PGS_카펫 {
     public int[] solution(int brown, int yellow) {
         
         int plus = (brown/2)-2;

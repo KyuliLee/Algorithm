@@ -1,6 +1,6 @@
 import java.util.*;
 
-class Solution {
+class PGS_폰켓몬 {
     public int solution(int[] nums) {
         // nums의 값들을 Set에 넣어서 중복을 제거
         HashSet<Integer> set = new HashSet<>();
