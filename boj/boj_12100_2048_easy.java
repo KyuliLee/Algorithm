@@ -3,195 +3,155 @@ package boj;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Stack;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class boj_12100_2048_easy {
+    static final int LIMIT = 5;
+    static final int LEFT = 0;
+    static final int RIGHT = 1;
+    static final int UP = 2;
+    static final int DOWN = 3;
+    static final int EMPTY = 0;
     static int N;
     static int[][] map;
     static int max = Integer.MIN_VALUE;
+    static Deque<Integer> stack = new ArrayDeque<>();
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
         map = new int[N][N];
         StringTokenizer st;
-        for(int i=0; i<N; i++) {
+        for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
-            for(int j=0; j<N; j++) {
+            for (int j = 0; j < N; j++) {
                 map[i][j] = Integer.parseInt(st.nextToken());
             }
         } // map 초기화 완료
-
-        dfs(map, 0);
-
+        for (int i = 0; i < 4; i++) {
+            dfs(cloneMap(map), i, 0);
+        }
         System.out.println(max);
-
     }
-    static void dfs(int[][] map, int depth) {
+
+    static void dfs(int[][] map, int dir, int depth) {
         // 종료 조건
-        if(depth == 5) {
-            // 최댓값 비교
-            for(int i=0; i<N; i++) {
-                for(int j=0; j<N; j++) {
-                    if(map[i][j] > max) {
-                        max = map[i][j];
-                    }
-                }
-            }
+        if(depth == LIMIT) {
             return;
         }
-        // 좌로 밀기
-        int[][] leftMap = copyMap(map);
-        pushLeft(leftMap);
-        dfs(leftMap, depth+1);
-
-        // 우로 밀기
-        int[][] rightMap = copyMap(map);
-        pushRight(rightMap);
-        dfs(rightMap, depth+1);
-
-        // 위로 밀기
-        int[][] upMap = copyMap(map);
-        pushUp(upMap);
-        dfs(upMap, depth+1);
-
-        // 아래로 밀기
-        int[][] downMap = copyMap(map);
-        pushDown(downMap);
-        dfs(downMap, depth+1);
-
-    }
-    static void pushLeft(int[][] leftMap) {
-        Stack<Integer> stack = new Stack<>();
-        for(int row=0; row<N; row++) {
-            for(int col=0; col<N; col++) {
-                int num = leftMap[row][col];
-                // 이번 숫자가 0이면 넘어감
-                if(num == 0) { continue; }
-                // 만약 스택에 숫자가 있고 가장 위의 숫자가 이번 숫자와 같다면 가장 위의 숫자를 빼고 2를 곱한 값을 넣어줌
-                if(!stack.isEmpty() && stack.peek() == num) {
-                    stack.pop();
-                    stack.push(num*2);
-                    // 한 번 연산을 했으면 또 연산이 되면 안 되므로 0으로 구분해줌
-                    stack.push(0);
-                } else {
-                    stack.push(num);
-                }
-                // 숫자가 있던 자리를 0으로 만듦
-                leftMap[row][col] = 0;
+        // 재귀 부분
+        switch(dir) {
+            case LEFT: {
+                left(map);
+                break;
             }
-
-            // 숫자 채우기
-            int colIdx = 0;
-            for(int num : stack) {
-                if(num != 0) {
-                    leftMap[row][colIdx++] = num;
-                }
+            case RIGHT: {
+                right(map);
+                break;
+            } case UP: {
+                up(map);
+                break;
+            } case DOWN: {
+                down(map);
+                break;
             }
-            stack.clear();
+        }
+        for(int i=0; i<4; i++) {
+            dfs(cloneMap(map), i, depth+1);
         }
     }
 
-    static void pushRight(int[][] rightMap) {
-        Stack<Integer> stack = new Stack<>();
+    static void left(int[][] map) {
         for(int row=0; row<N; row++) {
+            // 왼 쪽으로 밀 때 오른 쪽부터 스택에 쌓기
             for(int col=N-1; col>=0; col--) {
-                int num = rightMap[row][col];
-                // 이번 숫자가 0이면 넘어감
-                if(num == 0) { continue; }
-                // 만약 스택에 숫자가 있고 가장 위의 숫자가 이번 숫자와 같다면 가장 위의 숫자를 빼고 2를 곱한 값을 넣어줌
-                if(!stack.isEmpty() && stack.peek() == num) {
-                    stack.pop();
-                    stack.push(num*2);
-                    // 한 번 연산을 했으면 또 연산이 되면 안 되므로 0으로 구분해줌
-                    stack.push(0);
-                } else {
-                    stack.push(num);
-                }
-                // 숫자가 있던 자리를 0으로 만듦
-                rightMap[row][col] = 0;
-            }
-
-            // 숫자 채우기
-            int colIdx = N-1;
-            for(int num : stack) {
-                if(num != 0) {
-                    rightMap[row][colIdx--] = num;
+                int n = map[row][col];
+                if(n != EMPTY) {
+                    stack.push(n);
+                    map[row][col] = EMPTY;
                 }
             }
-            stack.clear();
+            // 왼쪽부터 채우기, 최댓값 비교
+            for(int col=0; !stack.isEmpty(); col++) {
+                map[row][col] = stack.pop();
+                if(!stack.isEmpty() && stack.peek() == map[row][col]) {
+                    map[row][col] += stack.pop();
+                }
+                max = Math.max(max, map[row][col]);
+            }
         }
     }
 
-    static void pushUp(int[][] upMap) {
-        Stack<Integer> stack = new Stack<>();
-        for(int col=0; col<N; col++) {
-            for(int row=0; row<N; row++) {
-                int num = upMap[row][col];
-                // 이번 숫자가 0이면 넘어감
-                if(num == 0) { continue; }
-                // 만약 스택에 숫자가 있고 가장 위의 숫자가 이번 숫자와 같다면 가장 위의 숫자를 빼고 2를 곱한 값을 넣어줌
-                if(!stack.isEmpty() && stack.peek() == num) {
-                    stack.pop();
-                    stack.push(num*2);
-                    // 한 번 연산을 했으면 또 연산이 되면 안 되므로 0으로 구분해줌
-                    stack.push(0);
-                } else {
-                    stack.push(num);
-                }
-                // 숫자가 있던 자리를 0으로 만듦
-                upMap[row][col] = 0;
-            }
-
-            // 숫자 채우기
-            int rowIdx = 0;
-            for(int num : stack) {
-                if(num != 0) {
-                    upMap[rowIdx++][col] = num;
+    static void right(int[][] map) {
+        for(int row=0; row<N; row++) {
+            // 오른 쪽으로 밀 때 왼 쪽부터 스택에 쌓기
+            for(int col=0; col<N; col++) {
+                int n = map[row][col];
+                if(n != EMPTY) {
+                    stack.push(n);
+                    map[row][col] = EMPTY;
                 }
             }
-            stack.clear();
+            // 오른쪽부터 채우기, 최댓값 비교
+            for(int col=N-1; !stack.isEmpty(); col--) {
+                map[row][col] = stack.pop();
+                if(!stack.isEmpty() && stack.peek() == map[row][col]) {
+                    map[row][col] += stack.pop();
+                }
+                max = Math.max(max, map[row][col]);
+            }
         }
     }
 
-    static void pushDown(int[][] downMap) {
-        Stack<Integer> stack = new Stack<>();
+    static void up(int[][] map) {
         for(int col=0; col<N; col++) {
+            // 위로 밀 때 아래부터 스택에 쌓기
             for(int row=N-1; row>=0; row--) {
-                int num = downMap[row][col];
-                // 이번 숫자가 0이면 넘어감
-                if(num == 0) { continue; }
-                // 만약 스택에 숫자가 있고 가장 위의 숫자가 이번 숫자와 같다면 가장 위의 숫자를 빼고 2를 곱한 값을 넣어줌
-                if(!stack.isEmpty() && stack.peek() == num) {
-                    stack.pop();
-                    stack.push(num*2);
-                    // 한 번 연산을 했으면 또 연산이 되면 안 되므로 0으로 구분해줌
-                    stack.push(0);
-                } else {
-                    stack.push(num);
-                }
-                // 숫자가 있던 자리를 0으로 만듦
-                downMap[row][col] = 0;
-            }
-
-            // 숫자 채우기
-            int rowIdx = N-1;
-            for(int num : stack) {
-                if(num != 0) {
-                    downMap[rowIdx--][col] = num;
+                int n = map[row][col];
+                if(n != EMPTY) {
+                    stack.push(n);
+                    map[row][col] = EMPTY;
                 }
             }
-            stack.clear();
+            // 위부터 채우기, 최댓값 비교
+            for(int row=0; !stack.isEmpty(); row++) {
+                map[row][col] = stack.pop();
+                if(!stack.isEmpty() && stack.peek() == map[row][col]) {
+                    map[row][col] += stack.pop();
+                }
+                max = Math.max(max, map[row][col]);
+            }
         }
     }
 
-    static int[][] copyMap(int[][] map) {
-        int[][] arr = new int[N][N];
+    static void down(int[][] map) {
+        for(int col=0; col<N; col++) {
+            // 아래쪽으로 밀 때 위쪽부터 스택에 쌓기
+            for(int row=0; row<N; row++) {
+                int n = map[row][col];
+                if(n != EMPTY) {
+                    stack.push(n);
+                    map[row][col] = EMPTY;
+                }
+            }
+            // 아래쪽부터 채우기, 최댓값 비교
+            for(int row=N-1; !stack.isEmpty(); row--) {
+                map[row][col] = stack.pop();
+                if(!stack.isEmpty() && stack.peek() == map[row][col]) {
+                    map[row][col] += stack.pop();
+                }
+                max = Math.max(max, map[row][col]);
+            }
+        }
+    }
+
+    static int[][] cloneMap(int[][] map) {
+        int[][] newMap = new int[N][N];
         for(int i=0; i<N; i++) {
-            arr[i] = Arrays.copyOf(map[i], N);
+            newMap[i] = Arrays.copyOf(map[i], N);
         }
-        return arr;
+        return newMap;
     }
+
+
 
 }
