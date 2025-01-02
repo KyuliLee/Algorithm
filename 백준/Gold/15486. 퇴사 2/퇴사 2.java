@@ -28,7 +28,9 @@ public class Main {
                 best[i+T[i]] = Math.max(best[i]+P[i], best[i+T[i]]);
             }
         }
-//        System.out.println(best[N+1]);
-        System.out.println(Arrays.stream(best).max().getAsInt());
+        best[N+1] = Math.max(best[N], best[N+1]);
+        System.out.println(best[N+1]);
+//        System.out.println(Arrays.stream(best).max().getAsInt());
+//        System.out.println(Arrays.toString(best));
     }
 }
