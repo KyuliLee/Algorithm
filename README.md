@@ -26,3 +26,15 @@
 
 ## 5. 느낀 점
 단순 반복 작업을 자동화하니까 편리했다. 이번에는 수정해야 하는 파일이 많지 않았지만 만약 수백 개, 수천 개의 파일을 수정해야 한다면 스크립트 사용은 필수라는 생각이 들었다.
+
+<!---LeetCode Topics Start-->
+# LeetCode Topics
+## String
+|  |
+| ------- |
+| [0020-valid-parentheses](https://github.com/KyuliLee/Algorithm/tree/master/0020-valid-parentheses) |
+## Stack
+|  |
+| ------- |
+| [0020-valid-parentheses](https://github.com/KyuliLee/Algorithm/tree/master/0020-valid-parentheses) |
+<!---LeetCode Topics End-->
