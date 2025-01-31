@@ -6,32 +6,33 @@ import java.util.StringTokenizer;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Stack<Integer> stack = new Stack<>();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st;
         int N = Integer.parseInt(br.readLine());
+        int[] arr = new int[N];
+        int idx = 0;
         StringBuilder sb = new StringBuilder();
         for(int i=0; i<N; i++) {
             st = new StringTokenizer(br.readLine());
             String cmd = st.nextToken();
             if(cmd.equals("push")) {
-                stack.push(Integer.parseInt(st.nextToken()));
+                arr[idx++] = Integer.parseInt(st.nextToken());
             } else if(cmd.equals("top")) {
-                if(stack.isEmpty()) {
+                if(idx<1) {
                     sb.append(-1).append("\n");
                 } else {
-                    sb.append(stack.peek()).append("\n");
+                    sb.append(arr[idx-1]).append("\n");
                 }
             } else if(cmd.equals("pop")) {
-                if(stack.isEmpty()) {
+                if(idx<1) {
                     sb.append(-1).append("\n");
                 } else {
-                    sb.append(stack.pop()).append("\n");
+                    sb.append(arr[--idx]).append("\n");
                 }
             } else if(cmd.equals("size")) {
-                sb.append(stack.size()).append("\n");
+                sb.append(idx).append("\n");
             } else {
-                if(stack.isEmpty()) {
+                if(idx<1) {
                     sb.append(1).append("\n");
                 } else {
                     sb.append(0).append("\n");
