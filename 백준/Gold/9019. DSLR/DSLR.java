@@ -38,63 +38,27 @@ public class Main {
                     break;
                 }
                 // D, S, L, R을 연산한 결과값과 str에 명령어 추가한 걸로 노드 만들고 큐에 넣음
-                int d = calD(now.n);
+                int d = now.n*2 > 9999 ? now.n*2 % 10000 : now.n*2;
                 if(!visited[d]) {
                     visited[d] = true;
                     q.offer(new Node(d, now.str+"D"));
                 }
-                int s = calS(now.n);
+                int s = now.n == 0 ? 9999 : now.n-1;
                 if(!visited[s]) {
                     visited[s] = true;
                     q.offer(new Node(s, now.str+"S"));
                 }
-                int l = calL(now.n);
+                int l = now.n/1000 + (now.n%1000)*10;
                 if(!visited[l]) {
                     visited[l] = true;
                     q.offer(new Node(l, now.str+"L"));
                 }
-                int r = calR(now.n);
+                int r = (now.n%10)*1000 + now.n/10;
                 if(!visited[r]) {
                     visited[r] = true;
                     q.offer(new Node(r, now.str+"R"));
                 }
             }
         }
-    }
-    public static int calD(int n) {
-        int res = n*2;
-        if(res > 9999) {
-            return res % 10000;
-        }
-        return res;
-    }
-    public static int calS(int n) {
-        int res = n-1;
-        if(n == 0) {
-            return 9999;
-        }
-        return res;
-    }
-    public static int calL(int n) { // n이 1234
-        int d4 = n%10;
-        n /= 10; // n이 123
-        int d3 = n%10;
-        n /= 10; // n이 12
-        int d2 = n%10;
-        n /= 10; // n이 1
-        int d1 = n;
-
-        return d2*1000 + d3*100 + d4*10 + d1;
-    }
-    public static int calR(int n) { // n이 1234
-        int d4 = n%10;
-        n /= 10; // n이 123
-        int d3 = n%10;
-        n /= 10; // n이 12
-        int d2 = n%10;
-        n /= 10; // n이 1
-        int d1 = n;
-
-        return d4*1000 + d1*100 + d2*10 + d3;
     }
 }
