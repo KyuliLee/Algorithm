@@ -1,22 +1,25 @@
 class Solution {
     static int cnt = 0;
-    static int N;
+    static int size;
+    static boolean[] visit;
     public int solution(int[] numbers, int target) {
-        N = numbers.length;
-        int n = numbers[0];
+        size = numbers.length;
+        visit = new boolean[size];
+        
         dfs(numbers, target, 0, 0);
-    
+        
         return cnt;
     }
-    static void dfs(int[]numbers, int target, int curr, int depth) {
-        // 종료 조건
-        if(depth == N) {
-            if(curr == target) cnt++;
+    static void dfs(int[] numbers, int target, int cal, int depth) {
+        if(depth == size) {
+            if(cal == target) {
+                cnt++;
+            }
             return;
         }
-        // 재귀 부분
+        
         int n = numbers[depth];
-        dfs(numbers, target, curr+n, depth+1);
-        dfs(numbers, target, curr-n, depth+1);
+        dfs(numbers, target, cal+n, depth+1);
+        dfs(numbers, target, cal-n, depth+1);
     }
 }
