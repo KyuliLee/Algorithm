@@ -14,10 +14,8 @@ class Solution {
         }
         for(int i=0; i<size; i++) {
             int[] conn = computers[i];
-            System.out.println(Arrays.toString(conn));
             for(int j=i+1; j<size; j++) {
                 if(conn[j]==1) {
-                    System.out.println("start : " + i + ", end : " + j);
                     list[i].add(j);
                     list[j].add(i);
                 }
@@ -26,7 +24,6 @@ class Solution {
         
         for(int i=0; i<size; i++) {
             if(!visited[i]) {
-                System.out.println("카운트되는 점 : " + i);
                 cnt++;
                 visited[i] = true;
                 dfs(i);
@@ -35,9 +32,7 @@ class Solution {
         return cnt;
     }
     static void dfs(int com) {
-        System.out.println("dfs되는 점 : " + com);
         List<Integer> network = list[com];
-        System.out.println(network);
         
         for(int i=0; i<network.size(); i++) {
             int n = network.get(i);
