@@ -5,92 +5,142 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
+class Pos {
+    int r;
+    int c;
+    int time;
+    public Pos(int r, int c, int time) {
+        this.r = r;
+        this.c = c;
+        this.time = time;
+    }
+}
 public class Main {
     static int N;
     static int M;
     static int T;
+    static int[][] arr;
     static int[] dr = {-1, 1, 0, 0};
     static int[] dc = {0, 0, -1, 1};
-
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
         T = Integer.parseInt(st.nextToken());
-
-        int[][] arr = new int[N][M];
-
+        arr = new int[N][M];
+        int gramR = -1;
+        int gramC = -1;
         for(int i=0; i<N; i++) {
             st = new StringTokenizer(br.readLine());
             for(int j=0; j<M; j++) {
                 arr[i][j] = Integer.parseInt(st.nextToken());
+                if(arr[i][j] == 2) {
+                    gramR = i;
+                    gramC = j;
+                }
             }
-        }
+        } // 초기화 완료
 
-        Queue<int[]> q = new LinkedList<>();
-        // [2]는 시간
-        // [3]은 0이면 그람을 만나지 못한 경우, 1이면 그람을 만난 경우
-        q.offer(new int[] {0, 0, 0, 0});
+        /* 문제
+        (0, 0)에서 (N-1, M-1)로 가는 최단 시간 구하기
+        0은 빈 공간, 1은 벽, 2는 그람. 그람을 만나면 벽 무제한으로 부수고 넘어갈 수 있음
+        T시간 안에 도달하면 그 시간 출력, 그 안에 도달 못 하면 fail 출력
+         */
 
-        boolean flag = false;
-        int result = 0;
-        // [][][0] : 아직 그람을 안 만난 경우, [][][1] : 그람 만난 경우 방문 처리
-        // 그람을 안 만났을 때 이미 방문했지만 그람을 만난 뒤에 방문해야 더 빨리 가는 경로가 있을 수 있음
-        boolean[][][] visited = new boolean[N][M][2];
-        visited[0][0][0] = true;
+        /* 풀이
+        그람을 만나는 경우, 안 만나는 경우 중 빠른 것 알아내기
+        그냥 bfs로 (N-1, M-1)까지 거리 vs
+        그람 위치까지 가는 bfs + 그람 위치 (i, j)~(N-1, M-1) 거리 계산.
+        둘 다 T 이내에 못 들어오면 fail 출력
+         */
 
-        while(!q.isEmpty()) {
-            int[] curr = q.poll();
-            int currR = curr[0];
-            int currC = curr[1];
-            int time = curr[2];
-            int canBreak = curr[3];
+        // 1) 그냥 bfs로 목적지까지
+        Queue<Pos> q1 = new LinkedList<>();
+        q1.offer(new Pos(0, 0, 0));
+        boolean[][] visited1 = new boolean[N][M];
+        visited1[0][0] = true;
+        int time1 = -1;
+        while(!q1.isEmpty()) {
+            Pos currPos = q1.poll();
+            int currR = currPos.r;
+            int currC = currPos.c;
+            int time = currPos.time;
 
             if(time > T) {
-                break;
+                continue;
             }
 
             if(currR == N-1 && currC == M-1) {
-                flag = true;
-                result = time;
+                time1 = time;
                 break;
             }
+            for(int d=0; d<4; d++) {
+                int newR = currR + dr[d];
+                int newC = currC + dc[d];
 
-            for(int d = 0; d<4; d++) {
-                int newR = currR+dr[d];
-                int newC = currC+dc[d];
-
-                if(!isValid(newR, newC)) {
+                if(!isValid(newR, newC) || visited1[newR][newC]) {
                     continue;
                 }
-                // 그람을 만나지 않은 상태
-                if(canBreak == 0) {
-                    if(!visited[newR][newC][0]) {
-                        if(arr[newR][newC] == 0) {
-                            q.offer(new int[] {newR, newC, time+1, 0});
-                            visited[newR][newC][0] = true;
-                        } else if(arr[newR][newC] == 1) {
-                            continue;
-                        } else { // 이번에 그람을 만남
-                            q.offer(new int[] {newR, newC, time+1, 1});
-                            visited[newR][newC][1] = true;
-                        }
-                    }
-                } else { // 그람을 만난 상태
-                    if(!visited[newR][newC][1]) {
-                        q.offer(new int[] {newR, newC, time+1, 1});
-                        visited[newR][newC][1] = true;
-                    }
+                if(arr[newR][newC] == 1) { // 벽은 못 지나감
+                    continue;
                 }
+                q1.offer(new Pos(newR, newC, time+1));
+                visited1[newR][newC] = true;
             }
         }
-        if(flag && result <= T) {
-            System.out.println(result);
-        } else {
-            System.out.println("Fail");
+        // 2) 그람까지 bfs
+        Queue<Pos> q2 = new LinkedList<>();
+        q2.offer(new Pos(0, 0, 0));
+        boolean[][] visited2 = new boolean[N][M];
+        visited2[0][0] = true;
+        int time2 = -1;
+        while(!q2.isEmpty()) {
+            Pos currPos = q2.poll();
+            int currR = currPos.r;
+            int currC = currPos.c;
+            int time = currPos.time;
+
+            if(time > T) {
+                continue;
+            }
+
+            if(currR == gramR && currC == gramC) {
+                time2 = time;
+                break;
+            }
+            for(int d=0; d<4; d++) {
+                int newR = currR + dr[d];
+                int newC = currC + dc[d];
+
+                if(!isValid(newR, newC) || visited2[newR][newC]) {
+                    continue;
+                }
+                if(arr[newR][newC] == 1) { // 벽은 못 지나감
+                    continue;
+                }
+                q2.offer(new Pos(newR, newC, time+1));
+                visited2[newR][newC] = true;
+            }
         }
+
+        // time > T에서 break 했으니까 bfs1, bfs2에서 이미 시간이 T를 넘었으면 time이 -1로 고정됨
+
+        if(time2 != -1) {
+            time2 += (N-1)-gramR + (M-1)-gramC;
+            if(time2 > T) {
+                time2 = -1;
+            }
+        }
+
+        if(time1 != -1 && time2 != -1) {
+            System.out.println(Math.min(time1, time2));
+        } else if (time1 == -1 && time2 == -1) {
+            System.out.println("Fail");
+        } else {
+            System.out.println(Math.max(time1, time2));
+        }
+
     }
     public static boolean isValid(int r, int c) {
         return r>=0 && r<N && c>=0 && c<M;
