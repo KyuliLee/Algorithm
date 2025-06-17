@@ -9,11 +9,10 @@ public class Main {
         int n = Integer.parseInt(br.readLine());
         StringBuilder sb = new StringBuilder();
         for(int i=n; i>=1; i--) {
-            int j=n-i;
-            for(int k=0; k<j; k++) {
+            for(int j=1; j<=n-i; j++) {
                 sb.append(" ");
             }
-            for(int k=0; k<i; k++) {
+            for(int j=1; j<=i; j++) {
                 sb.append("*");
             }
             sb.append("\n");
