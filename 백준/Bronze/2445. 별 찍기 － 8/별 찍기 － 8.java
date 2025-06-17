@@ -13,10 +13,7 @@ public class Main {
                 sb.append("*");
             }
             for(int j=n-i; j>=1; j--) {
-                sb.append(" ");
-            }
-            for(int j=n-i; j>=1; j--) {
-                sb.append(" ");
+                sb.append("  ");
             }
             for(int j=1; j<=i; j++) {
                 sb.append("*");
@@ -33,10 +30,7 @@ public class Main {
                 sb.append("*");
             }
             for(int j=1; j<=n-i; j++) {
-                sb.append(" ");
-            }
-            for(int j=1; j<=n-i; j++) {
-                sb.append(" ");
+                sb.append("  ");
             }
             for(int j=i; j>=1; j--) {
                 sb.append("*");
