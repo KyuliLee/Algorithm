@@ -21,21 +21,22 @@ public class Main {
             dp[1][i] = 1;
         }
 
-        for(int n=1; n<N; n++) {
+        for(int n=2; n<=N; n++) {
             for(int i=0; i<10; i++) {
                 if(i==0) {
-                    dp[n+1][1] += (dp[n][0]%mod);
+                    dp[n][1] += (dp[n-1][0]%mod);
                 } else if(i==9) {
-                    dp[n+1][8] += (dp[n][9]%mod);
+                    dp[n][8] += (dp[n-1][9]%mod);
                 } else {
-                    dp[n+1][i-1] += (dp[n][i]%mod);
-                    dp[n+1][i+1] += (dp[n][i]%mod);
+                    dp[n][i-1] += (dp[n-1][i]%mod);
+                    dp[n][i+1] += (dp[n-1][i]%mod);
                 }
             }
         }
-        long num = 0;
+        int num = 0;
         for(int i=0; i<10; i++) {
             num += (dp[N][i] % mod);
+            num %= mod;
         }
         System.out.println(num%mod);
     }
