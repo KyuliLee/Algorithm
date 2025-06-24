@@ -16,7 +16,7 @@ public class Main {
         2차원 배열 생성. dp[a][b]는 길이가 a이고 끝자리가 b인 계단 수의 개수를 말한다.
          */
 
-        long[][] dp = new long[N+1][10];
+        int[][] dp = new int[N+1][10];
         for(int i=1; i<=9; i++) {
             dp[1][i] = 1;
         }
@@ -38,6 +38,6 @@ public class Main {
             num += (dp[N][i] % mod);
             num %= mod;
         }
-        System.out.println(num%mod);
+        System.out.println(num);
     }
 }
