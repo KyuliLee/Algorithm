@@ -16,25 +16,21 @@ public class Main {
                 map.put(n, 1);
             }
         }
-        /*
-        map의 key들을 돌면서 value가 클 때를 구함
-        maxCnt는 현재까지 가장 많이 갖고 있는 정수 카드의 값.
-        maxCnt와 이번 value를 비교하면서 만약 value가 더 크면 maxCnt 갱신, pq 클리어하고 key넣기
-        만약 maxCnt와 이번 value가 같다면 pq에 key 넣기
-         */
+
         int maxCnt = -1;
-        PriorityQueue<Long> pq = new PriorityQueue<>();
+        long num = 0;
         for(Long k : map.keySet()) {
             int v = map.get(k);
             if(maxCnt < v) {
                 maxCnt = v;
-                pq.clear();
-                pq.offer(k);
+                num = k;
             } else if(maxCnt == v) {
-                pq.offer(k);
+                if(num > k) {
+                    num = k;
+                }
             }
         }
-        System.out.print(pq.poll());
+        System.out.print(num);
 
     }
 }
