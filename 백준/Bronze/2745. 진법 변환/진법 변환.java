@@ -11,17 +11,17 @@ public class Main {
         String str = st.nextToken();
         char[] charArr = str.toCharArray();
         int N = Integer.parseInt(st.nextToken());
-
         int len = charArr.length;
         int ans = 0;
-        for(int i=0; i<charArr.length; i++) {
-            char c = charArr[i];
-            int n = c-'0';
-            if(n<=9) {
-                ans += n*Math.pow(N, --len);
+        int exponential = len-1;
+        for(int i=0; i<len; i++) {
+            int n = 0;
+            if(charArr[i] >= 65) { // A 이상이라면
+                n = charArr[i]-55;
             } else {
-                ans += (n-7)*Math.pow(N, --len);
+                n = charArr[i]-48;
             }
+            ans += n*Math.pow(N, exponential--);
         }
         System.out.println(ans);
     }
