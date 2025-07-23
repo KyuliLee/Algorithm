@@ -2,55 +2,45 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.StringTokenizer;
 
 public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int[] arr = new int[9];
+        int sum = 0;
+        for(int i=0; i<9; i++) {
+            arr[i] = Integer.parseInt(br.readLine());
+            sum += arr[i];
+        }
+        /*
+        9개의 숫자 중 7개를 더해 합이 100이 되어야 함.
+        9개의 합은 sum, 숫자 2개를 빼서 100이 되게 하는 두 숫자를 구하자.
+         */
+        Arrays.sort(arr);
+        int a = -1;
+        int b = -1;
+        boolean flag = false;
+        for(int i=0; i<8; i++) {
+            for(int j=i+1; j<9; j++) {
+                if(sum-arr[i]-arr[j] == 100) {
+                    a = i;
+                    b = j;
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag) {
+                break;
+            }
+        }
 
-	private static int[] nan9 = new int[9];
-	private static boolean[] visited = new boolean[9];
-	private static int[] nan7 = new int[7];
-	private static boolean isFinished = false;
-	
-	public static void main(String[] args) throws IOException {
-		BufferedReader br =  new BufferedReader(new InputStreamReader(System.in));
-		
-		for(int i=0; i<9; i++) {
-			nan9[i] = Integer.parseInt(br.readLine());
-		}
-		
-		calc(0, 0);
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<9; i++) {
+            if(i != a && i != b) {
+                sb.append(arr[i]).append("\n");
+            }
+        }
+        System.out.print(sb);
 
-	}
-	
-	public static void calc(int depth, int sum) {
-		// 종료 조건 - 이미 출력했으면 종료
-		if(isFinished) return;
-		
-		// 종료 조건
-		if(depth == 7) {
-			if(sum == 100) {
-				Arrays.sort(nan7);
-				StringBuilder sb = new StringBuilder("");
-				for(int i=0; i<7; i++) {
-					sb.append(nan7[i]).append("\n");
-				}
-				System.out.println(sb);
-				isFinished = true;
-			}
-			return;
-		}
-		if(depth<7 && sum >= 100) return;
-		
-		// 재귀 조건
-		for(int i=0; i<9; i++) {
-			
-			if(visited[i]) continue;
-			
-			visited[i] = true;
-			nan7[depth] = nan9[i];
-			calc(depth+1, sum+nan9[i]);
-			
-			visited[i] = false;
-		}
-	}
+    }
 }
