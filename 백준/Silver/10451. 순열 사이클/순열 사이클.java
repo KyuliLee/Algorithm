@@ -26,18 +26,15 @@ public class Main {
                 if(visited[i]) {
                     continue;
                 }
-                dfs(i);
+                int next = arr[i];
+                while(!visited[next]) {
+                    visited[next] = true;
+                    next = arr[next];
+                }
                 cnt++;
             }
             sb.append(cnt).append("\n");
         }
         System.out.println(sb);
-    }
-    static void dfs(int start) {
-        visited[start] = true;
-        if(visited[arr[start]]) {
-            return;
-        }
-        dfs(arr[start]);
     }
 }
