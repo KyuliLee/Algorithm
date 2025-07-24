@@ -9,10 +9,9 @@ class Pos {
     int r;
     int c;
     char color;
-    public Pos(int r, int c, char color) {
+    public Pos(int r, int c) {
         this.r = r;
         this.c = c;
-        this.color = color;
     }
 }
 public class Main {
@@ -44,7 +43,7 @@ public class Main {
         int c = 0;
         char color = arr[r][c];
         while(r != -1 && c != -1) {
-            q.offer(new Pos(r, c, color));
+            q.offer(new Pos(r, c));
             visited[r][c] = true;
 
             while(!q.isEmpty()) {
@@ -61,7 +60,7 @@ public class Main {
                     }
                     // 같은 색의 구역이면 큐에 넣고 방문처리
                     if(arr[newR][newC] == color) {
-                        q.offer(new Pos(newR, newC, color));
+                        q.offer(new Pos(newR, newC));
                         visited[newR][newC] = true;
                     }
                 }
@@ -82,8 +81,9 @@ public class Main {
         r = 0;
         c = 0;
         color = arr[r][c];
+        color = arr[r][c];
         while(r != -1 && c != -1) {
-            q.offer(new Pos(r, c, color));
+            q.offer(new Pos(r, c));
             visited[r][c] = true;
 
             while(!q.isEmpty()) {
@@ -100,10 +100,10 @@ public class Main {
                     }
                     // G-R 색의 구역이면 큐에 넣고 방문처리
                     if(color != 'B' && arr[newR][newC] != 'B') {
-                        q.offer(new Pos(newR, newC, arr[newR][newC]));
+                        q.offer(new Pos(newR, newC));
                         visited[newR][newC] = true;
                     } else if(color == 'B' && arr[newR][newC] == 'B') {
-                        q.offer(new Pos(newR, newC, arr[newR][newC]));
+                        q.offer(new Pos(newR, newC));
                         visited[newR][newC] = true;
                     }
                 }
