@@ -51,7 +51,7 @@ public class Main {
         for(int i=0; i<N; i++) {
             for(int j=0; j<N; j++) {
                 if(!visited[i][j]) {
-                    bfs(i, j);
+                    dfs(i, j);
                     area++;
                 }
             }
@@ -63,7 +63,7 @@ public class Main {
         for(int i=0; i<N; i++) {
             for(int j=0; j<N; j++) {
                 if(!visited[i][j]) {
-                    bfsBlind(i, j);
+                    dfsBlind(i, j);
                     area++;
                 }
             }
@@ -71,42 +71,34 @@ public class Main {
         System.out.print(area);
 
     }
-    static void bfs(int r, int c) {
-        Queue<Pos> q = new LinkedList<>();
-        q.offer(new Pos(r, c));
+    static void dfs(int r, int c) {
+        visited[r][c] = true;
 
-        while(!q.isEmpty()) {
-            Pos curr = q.poll();
-            for(int d=0; d<4; d++) {
-                int newR = curr.r + dr[d];
-                int newC = curr.c + dc[d];
-                if(!isValid(newR, newC) || visited[newR][newC]) {
-                    continue;
-                }
-                if(arr[curr.r][curr.c] == arr[newR][newC]) {
-                    q.offer(new Pos(newR, newC));
-                    visited[newR][newC] = true;
-                }
+        for(int d=0; d<4; d++) {
+            int newR = r + dr[d];
+            int newC = c + dc[d];
+            if(!isValid(newR, newC) || visited[newR][newC]) {
+                continue;
+            }
+            if(arr[r][c] == arr[newR][newC]) {
+                visited[newR][newC] = true;
+                dfs(newR, newC);
             }
         }
     }
 
-    static void bfsBlind(int r, int c) {
-        Queue<Pos> q = new LinkedList<>();
-        q.offer(new Pos(r, c));
+    static void dfsBlind(int r, int c) {
+        visited[r][c] = true;
 
-        while(!q.isEmpty()) {
-            Pos curr = q.poll();
-            for(int d=0; d<4; d++) {
-                int newR = curr.r + dr[d];
-                int newC = curr.c + dc[d];
-                if(!isValid(newR, newC) || visited[newR][newC]) {
-                    continue;
-                }
-                if(arrBlind[curr.r][curr.c] == arrBlind[newR][newC]) {
-                    q.offer(new Pos(newR, newC));
-                    visited[newR][newC] = true;
-                }
+        for(int d=0; d<4; d++) {
+            int newR = r + dr[d];
+            int newC = c + dc[d];
+            if(!isValid(newR, newC) || visited[newR][newC]) {
+                continue;
+            }
+            if(arrBlind[r][c] == arrBlind[newR][newC]) {
+                visited[newR][newC] = true;
+                dfsBlind(newR, newC);
             }
         }
     }
