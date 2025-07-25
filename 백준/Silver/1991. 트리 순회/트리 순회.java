@@ -11,72 +11,68 @@ class Node{
         this.value = value;
     }
 }
+
 public class Main {
-    static Node head = new Node('A');
+    static Node[] nodes = new Node[26];      // 'A' ~ 'Z'
+    static StringBuilder pre = new StringBuilder();
+    static StringBuilder in  = new StringBuilder();
+    static StringBuilder post= new StringBuilder();
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
-        StringTokenizer st;
-        for(int i=0; i<N; i++) {
-            st = new StringTokenizer(br.readLine());
-            char rootValue = st.nextToken().charAt(0);
-            char leftValue = st.nextToken().charAt(0);
-            char rightValue = st.nextToken().charAt(0);
-            insertNode(head, rootValue, leftValue, rightValue);
-        }
-        preorder(head);
-        System.out.println();
-        inorder(head);
-        System.out.println();
-        postorder(head);
 
-    }
-    static void insertNode(Node temp, char rootValue, char leftValue, char rightValue) {
-        if(temp.value == rootValue) {
-            if(leftValue == '.') {
-                temp.left = null;
-            } else {
-                temp.left = new Node(leftValue);
+        // 루트 A 노드 미리 생성
+        nodes[0] = new Node('A');
+
+        for (int i = 0; i < N; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            char r = st.nextToken().charAt(0);
+            char l = st.nextToken().charAt(0);
+            char rr= st.nextToken().charAt(0);
+
+            int ri = r - 'A';
+            if (nodes[ri] == null) nodes[ri] = new Node(r);
+
+            if (l != '.') {
+                int li = l - 'A';
+                if (nodes[li] == null) nodes[li] = new Node(l);
+                nodes[ri].left = nodes[li];
             }
-            if(rightValue == '.') {
-                temp.right = null;
-            } else {
-                temp.right = new Node(rightValue);
-            }
-        } else {
-            if(temp.left != null) {
-                insertNode(temp.left, rootValue, leftValue, rightValue);
-            }
-            if(temp.right != null) {
-                insertNode(temp.right, rootValue, leftValue,rightValue);
+            if (rr != '.') {
+                int rri = rr - 'A';
+                if (nodes[rri] == null) nodes[rri] = new Node(rr);
+                nodes[ri].right = nodes[rri];
             }
         }
+
+        // 한 번 순회하면서 StringBuilder에 차곡차곡 저장
+        preorder (nodes[0]);
+        inorder  (nodes[0]);
+        postorder(nodes[0]);
+
+        // 출력은 한 번만
+        System.out.println(pre);
+        System.out.println(in);
+        System.out.println(post);
     }
-    static void preorder(Node node) {
-        System.out.print(node.value);
-        if(node.left != null) {
-            preorder(node.left);
-        }
-        if(node.right != null) {
-            preorder(node.right);
-        }
+
+    static void preorder(Node n) {
+        if (n == null) return;
+        pre.append(n.value);
+        preorder(n.left);
+        preorder(n.right);
     }
-    static void inorder(Node node) {
-        if(node.left != null) {
-            inorder(node.left);
-        }
-        System.out.print(node.value);
-        if(node.right != null) {
-            inorder(node.right);
-        }
+    static void inorder(Node n) {
+        if (n == null) return;
+        inorder(n.left);
+        in.append(n.value);
+        inorder(n.right);
     }
-    static void postorder(Node node) {
-        if(node.left != null) {
-            postorder(node.left);
-        }
-        if(node.right != null) {
-            postorder(node.right);
-        }
-        System.out.print(node.value);
+    static void postorder(Node n) {
+        if (n == null) return;
+        postorder(n.left);
+        postorder(n.right);
+        post.append(n.value);
     }
 }
