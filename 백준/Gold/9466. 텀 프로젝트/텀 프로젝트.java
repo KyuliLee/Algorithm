@@ -4,55 +4,53 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
+    static int N;
     static int[] arr;
-    static boolean[] checked;
     static boolean[] visited;
+    static boolean[] finish;
     static int cnt;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int T = Integer.parseInt(br.readLine());
+        int TC = Integer.parseInt(br.readLine());
         StringTokenizer st;
         StringBuilder sb = new StringBuilder();
-        for(int tc=0; tc<T; tc++) {
-            int N = Integer.parseInt(br.readLine());
-            arr = new int[N + 1]; // 인덱스 번호의 학생이 선택하는 학생을 저장
-            visited = new boolean[N+1]; // 방문했는데 또 방문했으면 사이클
-            checked = new boolean[N+1]; // 이 학생이 팀을 만들 수 있는지, 없는지 체크
-            cnt = 0; // 팀을 만들 수 있는 학생 수 카운트
-
+        for(int tc=0; tc<TC; tc++) {
+            cnt = 0;
+            N = Integer.parseInt(br.readLine());
+            arr = new int[N +1];
+            visited = new boolean[N+1];
+            finish = new boolean[N+1];
             st = new StringTokenizer(br.readLine());
             for(int i=1; i<=N; i++) {
                 arr[i] = Integer.parseInt(st.nextToken());
             }
-            /*
-            이번 학생이 이미 팀을 구성했는지, 못 하는지 체크했으면 넘어감
-             */
             for(int i=1; i<=N; i++) {
-                if(checked[i]) {
+                // 이미 팀이 되는지, 안 되는지 정해진 학생이면 넘어감
+                if(finish[i]) {
                     continue;
                 }
                 dfs(i);
             }
             sb.append(N-cnt).append("\n");
-
         }
         System.out.print(sb);
     }
-    static void dfs(int curr) {
-        // 이번 학생을 이미 방문했다면 사이클이므로 체크해줌
-        if(visited[curr]) {
-            checked[curr] = true;
+    static void dfs(int n) {
+        if(finish[n]) {
+            return;
+        }
+        if(visited[n]) { // 이미 방문했는데 또 왔으면 사이클 == 팀 만듦
+            finish[n] = true;
             cnt++;
-        } else {
-            visited[curr] = true;
         }
-        // 다음 학생이 체크되지 않았다면 dfs
-        int next = arr[curr];
-        if(!checked[next]) {
-            dfs(next);
-        }
+        visited[n] = true;
+        int next = arr[n];
 
-        // 사이클을 다 돌고 나면 이 학생이 사이클든 아니든 체크해줌.
-        checked[curr] = true;
+        if(!finish[next]) {
+            dfs(next);
+        } {
+            finish[n] = true; // 내가 선택한 학생이 이미 팀이라면 나는 팀을 못 만드므로 바로 true로 바꿔줌
+        }
+        finish[n] = true; // 사이클 다 돌고 나서는 팀 못 만든 학생도 true로 갱신
     }
 }
