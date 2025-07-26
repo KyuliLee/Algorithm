@@ -1,46 +1,42 @@
 import java.util.*;
+
 class Solution {
-    static List<Integer>[] list;
-    static int size;
-    static boolean[] visited;
     static int cnt = 0;
-    
+    static ArrayList<Integer>[] graph;
+    static boolean[] visited;
     public int solution(int n, int[][] computers) {
-        size = computers.length;
-        visited = new boolean[size];
-        list = new ArrayList[size];
-        for(int i=0; i<size; i++) {
-            list[i] = new ArrayList<>();
+        // 컴퓨터는 0부터 시작
+        graph = new ArrayList[n];
+        visited = new boolean[n];
+        for(int i=0; i<n; i++) {
+            graph[i] = new ArrayList<>();
         }
-        for(int i=0; i<size; i++) {
+        for(int i=0; i<n-1; i++) {
             int[] conn = computers[i];
-            for(int j=i+1; j<size; j++) {
-                if(conn[j]==1) {
-                    list[i].add(j);
-                    list[j].add(i);
+            for(int j=i+1; j<n; j++) {
+                if(conn[j] == 1) {
+                    graph[i].add(j);
+                    graph[j].add(i);
                 }
             }
-        } // 초기화 완료
+        } // 그래프 초기화 완료
         
-        for(int i=0; i<size; i++) {
-            if(!visited[i]) {
-                cnt++;
-                visited[i] = true;
-                dfs(i);
-            }
+        for(int i=0; i<n; i++) {
+            if(visited[i]) { continue; }
+            cnt++;
+            dfs(i);
         }
+        
         return cnt;
     }
-    static void dfs(int com) {
-        List<Integer> network = list[com];
-        
-        for(int i=0; i<network.size(); i++) {
-            int n = network.get(i);
-            if(!visited[n]) {
-                visited[n] = true;
-                dfs(n);
+    void dfs(int curr) {
+        visited[curr] = true;
+        ArrayList<Integer> list = graph[curr];
+        for(int n : list) {
+            if(visited[n]) {
+                continue;
             }
+            dfs(n);
         }
-        
     }
 }
