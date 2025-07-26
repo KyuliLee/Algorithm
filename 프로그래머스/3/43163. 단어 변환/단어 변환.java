@@ -1,54 +1,54 @@
 import java.util.*;
+class Word {
+    String str;
+    int cnt;
+    public Word(String str, int cnt) {
+        this.str = str;
+        this.cnt = cnt;
+    }
+}
 class Solution {
     static int N;
+    static boolean[] visited;
+    static char[] charArr;
+    
     public int solution(String begin, String target, String[] words) {
-        N = words.length;
-        // target이 words안에 없으면 0 리턴
-        boolean isContained = false;
-        for(int i=0; i<N; i++) {
-            if(words[i].equals(target)) {
-                isContained = true;
+        boolean haveTarget = false;
+        for(String word : words) {
+            if(word.equals(target)) {
+                haveTarget = true;
                 break;
             }
         }
-        if(!isContained) return 0;
-        
-        Queue<String[]> q = new LinkedList<>();
-        q.offer(new String[] {begin, "0"});
-        boolean[] visited = new boolean[N];
-        
+        if(!haveTarget) {
+            return 0;
+        }
+        N = words.length;
+        visited = new boolean[N];
+        charArr = begin.toCharArray();
+        // begin단어를 한 글자씩 바꿔가면서 words에 있는지 확인
+        Queue<Word> q = new LinkedList<>();
+        q.offer(new Word(begin, 0));
         while(!q.isEmpty()) {
-            String[] currStr = q.poll();
-            String str = currStr[0];
-            String cntStr = currStr[1];
-            int cnt = Integer.parseInt(cntStr);
-            
-            
-            if(str.equals(target)) {
-                return cnt;
-            }
-            
-            // words를 돌면서 한 글자만 다른 단어를 큐에 넣고 방문 체크
-            for(int i=0; i<N; i++) {
-                if(!visited[i]) {
-                    if(ifOnlyOneDiff(str, words[i])) {
-                        visited[i] = true;
-                        q.offer(new String[] {words[i], String.valueOf(cnt+1)});
-                    }
+            Word currWord = q.poll();
+            String tempWord = currWord.str;
+            int cnt = currWord.cnt;
+            if(tempWord.equals(target)) { return cnt; }
+            // 큐에서 꺼낸 단어를 char배열로 만들고 이 중 알파벳 1개만 다른 단어가 word에 있다면 큐에 넣음
+            charArr = tempWord.toCharArray();
+            for(String word : words) {
+                int diffNum = 0;
+                for(int i=0; i<charArr.length; i++) {
+                    if(word.charAt(i) == charArr[i]) { continue; }
+                    diffNum++;
+                }
+                if(diffNum == 1) {
+                    q.offer(new Word(word, cnt+1));
                 }
             }
+            
         }
-        return 100;
-    }
-    static boolean ifOnlyOneDiff(String str1, String str2) {
-        char[] chArr1 = str1.toCharArray();
-        char[] chArr2 = str2.toCharArray();
-        int diffNum = 0;
-        for(int i=0; i<chArr1.length; i++) {
-            if(diffNum>=2) break;
-            if(chArr1[i] != chArr2[i]) diffNum++;
-        }
-        if(diffNum==1) return true;
-        return false;
+        
+        return -1;
     }
 }
