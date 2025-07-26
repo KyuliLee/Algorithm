@@ -1,25 +1,19 @@
 class Solution {
     static int cnt = 0;
-    static int size;
-    static boolean[] visit;
     public int solution(int[] numbers, int target) {
-        size = numbers.length;
-        visit = new boolean[size];
-        
-        dfs(numbers, target, 0, 0);
-        
+        dfs(numbers, target, 0+numbers[0], 1);
+        dfs(numbers, target, 0-numbers[0], 1);
         return cnt;
     }
-    static void dfs(int[] numbers, int target, int cal, int depth) {
-        if(depth == size) {
-            if(cal == target) {
+    void dfs(int[] numbers, int target, int sum, int depth) {
+        if(depth == numbers.length) {
+            if(sum == target) {
                 cnt++;
             }
             return;
         }
+        dfs(numbers, target, sum+numbers[depth], depth+1);
+        dfs(numbers, target, sum-numbers[depth], depth+1);
         
-        int n = numbers[depth];
-        dfs(numbers, target, cal+n, depth+1);
-        dfs(numbers, target, cal-n, depth+1);
     }
 }
