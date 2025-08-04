@@ -6,19 +6,11 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-    static boolean[] prime = new boolean[10000];
-    static boolean[] visited;
-
-
+    static boolean[] prime = new boolean[10000]; // 값이 false인 인덱스가 소수
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int TC = Integer.parseInt(br.readLine());
-        StringTokenizer st;
-        StringBuilder sb = new StringBuilder();
-        // 에라토스테네스의 체. false인 애들이 소수임
-        prime[0] = true;
-        prime[1] = true;
-        for(int i=2; i*i<100000000; i++) {
+        // 에라토스테네스의 체
+        for(int i=2; i*i<10000; i++) {
             if(prime[i]) {
                 continue;
             }
@@ -26,60 +18,65 @@ public class Main {
                 prime[j] = true;
             }
         }
-
+        int TC = Integer.parseInt(br.readLine());
+        StringTokenizer st;
+        StringBuilder sb = new StringBuilder();
         for(int tc=0; tc<TC; tc++) {
             st = new StringTokenizer(br.readLine());
             int src = Integer.parseInt(st.nextToken());
             int target = Integer.parseInt(st.nextToken());
-            int result = bfs(src, target);
-            if(result == -1) {
+
+            int res = bfs(src, target);
+            if(res == -1) {
                 sb.append("Impossible").append("\n");
             } else {
-                sb.append(result).append("\n");
+                sb.append(res).append("\n");
             }
         }
         System.out.println(sb);
     }
     static int bfs(int src, int target) {
-        visited = new boolean[10000];
-        int[] dist = new int[10000];
-        Queue<Integer> q = new LinkedList<>();
+        boolean[] visited = new boolean[10000];
         visited[src] = true;
+        int[] cnt = new int[10000];
+        Queue<Integer> q = new LinkedList<>();
         q.offer(src);
+
+        /*
+        원래 숫자 -> 스트링 -> char 배열로 바꾸고 천, 백, 십, 일의 자리 숫자를 하나씩 0~9로 바꾸기
+        바꾼 char 배열 -> 스트링 -> 숫자로 바꿔서 prime인지 확인
+        cnt배열 값 갱신하고 만약 target과 같으면 그 때 cnt값 리턴
+         */
         while(!q.isEmpty()) {
             int curr = q.poll();
             if(curr == target) {
-                return dist[curr];
+                return cnt[curr];
             }
+            char[] charArr = String.valueOf(curr).toCharArray();
 
-            /*
-            현재 숫자 -> 스트링 -> char형 배열로 해서 한 글자씩 0~9로 변경
-             */
-            String currStr = Integer.toString(curr);
-            char[] arr = currStr.toCharArray();
-            for(int i=0; i<4; i++) { // i가 0이면 천의 자리 숫자
-                char c = arr[i]; // 천, 백, 십, 일의 자리에 원래 있던 숫자
-
+            for(int i=0; i<4; i++) {
+                char c = charArr[i]; // 바꿀 숫자
                 for(int n=0; n<=9; n++) {
-                    // 천의 자리 숫자를 0으로 변경하면 안 되므로 넘어감
+                    // 천의 자리 숫자가 0이면 안 되므로 넘어감
                     if(n==0 && i==0) {
                         continue;
                     }
                     // 바꾸려는 숫자가 현재 숫자와 같으면 넘어감
-                    if(n==(c-'0')) {
+                    if(n == (c-'0')) {
                         continue;
                     }
-                    arr[i] = (char) (n+'0');
-                    int candidate = Integer.parseInt(new String(arr));
+                    charArr[i] = (char) (n+'0');
+                    int candidate = Integer.parseInt(new String(charArr));
                     if(!visited[candidate] && !prime[candidate]) {
                         visited[candidate] = true;
-                        dist[candidate] = dist[curr]+1;
+                        cnt[candidate] = cnt[curr]+1;
                         q.offer(candidate);
                     }
                 }
-                arr[i] = c;
+                charArr[i] = c;
             }
         }
+
         return -1;
     }
 }
