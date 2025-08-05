@@ -7,35 +7,38 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 public class Main {
+    static int N;
+    static int[] arr, sortedArr;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine());
+        arr = new int[N];
+        sortedArr = new int[N];
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int[] arr = new int[N];
-        int[] sorted = new int[N];
         for(int i=0; i<N; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
-            sorted[i] = arr[i];
-        } // 초기화 완료
-        Arrays.sort(sorted);
+            sortedArr[i] = arr[i];
+        }
+        Arrays.sort(sortedArr);
+        StringBuilder sb = new StringBuilder();
 
         Map<Integer, Integer> map = new HashMap<>();
-        int rank = 0;
-        map.put(sorted[0], rank++);
+        int cnt = 0;
+        map.put(sortedArr[0], cnt++);
         for(int i=1; i<N; i++) {
-            if(sorted[i] == sorted[i-1]) {
+            if(sortedArr[i] == sortedArr[i-1]) {
                 continue;
-            } else {
-                map.put(sorted[i], rank++);
             }
+            map.put(sortedArr[i], cnt++);
         }
 
-        StringBuilder sb = new StringBuilder();
         for(int i=0; i<N; i++) {
-            int key = arr[i];
-            sb.append(map.get(key)).append(" ");
+            int n = map.get(arr[i]);
+            sb.append(n).append(" ");
         }
+
         System.out.println(sb);
 
     }
+
 }
