@@ -1,30 +1,23 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
     static int N;
-    static ArrayList<Integer>[] graph;
-    static int min = Integer.MAX_VALUE;
-    static int start;
+    static int[][] arr;
     static boolean[] visited;
+    static int min = Integer.MAX_VALUE;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-        graph = new ArrayList[N];
+        arr = new int[N][N];
         visited = new boolean[N];
-        for(int i=0; i<N; i++) {
-            graph[i] = new ArrayList<>();
-        }
         StringTokenizer st;
         for(int i=0; i<N; i++) {
             st = new StringTokenizer(br.readLine());
             for(int j=0; j<N; j++) {
-                graph[i].add(Integer.parseInt(st.nextToken()));
+                arr[i][j] = Integer.parseInt(st.nextToken());
             }
         }
         for(int i=0; i<N; i++) {
@@ -32,24 +25,25 @@ public class Main {
         }
         System.out.println(min);
     }
-    static void dfs(int first, int start, int cost, int depth) {
-        if(depth == N && first == start) {
+    static void dfs(int start, int curr, int cost, int depth) {
+        if(depth == N && start == curr) {
             min = Math.min(min, cost);
             return;
         }
-        ArrayList<Integer> list = graph[start];
+        if(cost >= min) {
+            return;
+        }
         for(int i=0; i<N; i++) {
             if(visited[i]) {
                 continue;
             }
-            int tempCost = list.get(i);
-            if(tempCost == 0) {
+            if(arr[curr][i] == 0) {
                 continue;
             }
             visited[i] = true;
-            dfs(first, i, cost+tempCost, depth+1);
+            dfs(start, i, cost + arr[curr][i], depth+1);
             visited[i] = false;
-
         }
     }
+
 }
