@@ -38,19 +38,21 @@ public class Main {
 
     }
 
-    static void uni(int u, int v) {
+    // 이미 u와 v가 같은 그룹이라 합칠 필요가 없으면 false 리턴
+    static boolean uni(int u, int v) {
         int ru = find(u);
         int rv = find(v);
         if(ru == rv) {
-            return;
+            return false;
         }
         arr[rv] = ru;
+        return true;
     }
     static int find(int v) {
-        if(arr[v] == -1) {
+        if(arr[v] < 0) {
             return v;
         }
         int parent = arr[v];
-        return find(parent);
+        return arr[v] = find(parent); // 최적화 : 부모 값을 그냥 루트 값으로 반환하게 해버림
     }
 }
