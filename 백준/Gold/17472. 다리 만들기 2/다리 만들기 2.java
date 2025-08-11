@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-class Edge implements Comparable<Edge>{
+class Edge implements Comparable<Edge> {
     int from;
     int to;
     int len;
@@ -12,160 +12,151 @@ class Edge implements Comparable<Edge>{
         this.to = to;
         this.len = len;
     }
-
     @Override
     public int compareTo(Edge e) {
-        return this.len - e.len; // 거리 짧은 순으로 정렬 == 오름차순 정렬
+        return this.len - e.len; // 거리를 기준으로 오름차순 정렬
     }
 }
 public class Main {
     static int N, M;
-    static int[][] arr, map;
-    static int islandNum = 0;
-    static int[] dr = {-1, 1, 0, 0};
-    static int[] dc = {0, 0, -1, 1};
-//    static boolean[][] visited;
+    static int[][] arr;
+    static int[] dr = {-1, 1, 0, 0}, dc = {0, 0, -1, 1};
     static PriorityQueue<Edge> pq = new PriorityQueue<>();
+    static int islandNum;
     static int[] parents;
-
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
         arr = new int[N][M];
-        map = new int[N][M];
-//        visited = new boolean[N][M];
         for(int i=0; i<N; i++) {
             st = new StringTokenizer(br.readLine());
             for(int j=0; j<M; j++) {
                 arr[i][j] = Integer.parseInt(st.nextToken());
             }
         }
-        /*
-        다리 : 바다와 인접, 길이가 최소 2 이상, 가로 일직선 또는 세로 일직선.
-        다리 길이 최솟값 구하기
-        1이 땅, 0이 바다
-         */
 
         numbering();
 
-        // 섬을 만나면 다리 만들기
         for(int i=0; i<N; i++) {
             for(int j=0; j<M; j++) {
-                if(map[i][j] > 0) {
-                    makeBridge(i, j, map[i][j]);
+                if(arr[i][j] > 0) {
+                    makeBridge(i, j, arr[i][j]);
                 }
             }
         }
-
         parents = new int[islandNum+1];
         for(int i=1; i<=islandNum; i++) {
-            parents[i] = i;
+            parents[i] = -1;
         }
-
-        int ans = shortestPath();
+        int ans = calShortestPath();
         System.out.println(ans);
-
     }
-
-    static int shortestPath() {
+    static int calShortestPath() {
         int sum = 0;
-        int size = pq.size();
-        for(int i=0; i<size; i++) {
+        int edgeNum = 0; // 연결된 간선의 개수 세기. 트리의 특성에 따라 섬의 숫자(정점)-1이어야 함.
+
+        while(!pq.isEmpty()) {
             Edge edge = pq.poll();
-            int x = edge.from;
-            int y = edge.to;
-            if(find(x) != find(y)) {
-                sum += edge.len;
-                union(x, y);
-            }
+            int u = edge.from;
+            int v = edge.to;
+            int len = edge.len;
+
+            int ru = find(u);
+            int rv = find(v);
+
+            // 두 점의 루트가 같다면 이미 같은 그룹(최소신장트리)에 속해있으므로 넘어감
+            if(ru == rv) continue;
+
+            union(ru, rv);
+            sum += len;
+            edgeNum++;
         }
-        int rx = parents[1];
+
+        if(edgeNum != islandNum-1) {
+            return -1;
+        }
+        int root = find(1);
         for(int i=2; i<=islandNum; i++) {
-            if(rx != find(parents[i])) {
+            if(find(i) != root) {
                 return -1;
             }
         }
         return sum;
     }
-
-    static int find(int x) {
-        if(parents[x] == x)  return x;
-        int root = find(parents[x]);
-        return root;
+    static void union(int ru, int rv) {
+        parents[rv] = ru;
     }
-    static void union(int x, int y) {
-        x = find(x);
-        y = find(y);
-
-        if(x < y) {
-            parents[y] = x;
-        } else {
-            parents[x] = y;
+    static int find(int v) {
+        if(parents[v] == -1) {
+            return v;
         }
+        return parents[v] = find(parents[v]);
     }
-
+    // 해당 위치에서 4방향으로 다리 만들 수 있으면 pq에 넣음
     static void makeBridge(int r, int c, int currIsland) {
-        // 사방으로 다리놓기
+//        // from, to, len이 동일한 Edge를 pq에 또 넣지 않기 위해 방문 배열 사용
+//        boolean[][] visited = new boolean[N][M];
+//        visited[r][c] = true;
+
         for(int d=0; d<4; d++) {
             int newR = r;
             int newC = c;
-            int bridgeLen = 0;
+            int len = 0;
+
             while(true) {
                 newR += dr[d];
                 newC += dc[d];
-                // 이 방향이 더 이상 유효하지 않거나 동일한 섬으로 가는 방향이면 넘어감
-                if(!isValid(newR, newC)) { break; }
-                if(map[newR][newC] == currIsland) { break; }
-                if(map[newR][newC] == 0) {
-                    bridgeLen++;
-                    continue;
-                }
-//                거리가 2 이상인 다른 섬 만나면 pq에 넣고 이 방향 종료
-                if(bridgeLen >= 2) {
-                    pq.offer(new Edge(currIsland, map[newR][newC], bridgeLen));
-                }
-                break;
 
+                // 유효하지 않거나, 이동 위치가 현재 섬 안이면 넘어감
+                if(!isValid(newR, newC) || arr[newR][newC] == currIsland) break;
+
+                // 바다이면 다리 길이 증가, 다른 섬이면 다리 길이가 2보다 작으면 다른 방향 탐색, 2 이상일 때 pq에 넣고 다른 방향 탐색
+                if(arr[newR][newC] == 0) {
+                    len++;
+                } else {
+                    if(len<2) {
+                        break;
+                    } else {
+                        pq.offer(new Edge(currIsland, arr[newR][newC], len));
+                        break;
+                    }
+                }
             }
         }
-
     }
-
     static void numbering() {
+        islandNum = 0;
         boolean[][] visited = new boolean[N][M];
         for(int i=0; i<N; i++) {
             for(int j=0; j<M; j++) {
-                if(visited[i][j]) { continue; }
-                if(arr[i][j] == 1) {
+                if(arr[i][j] == 0) continue;
+                if(visited[i][j]) continue;
+                islandNum++;
+                visited[i][j] = true;
 
-                    map[i][j] = ++islandNum;
-                    Queue<int[]> q = new LinkedList<>();
-                    q.offer(new int[] {i, j});
-                    visited[i][j] = true;
-                    while(!q.isEmpty()) {
-                        int[] curr = q.poll();
-                        for(int d=0; d<4; d++) {
-                            int newR = curr[0]+dr[d];
-                            int newC = curr[1]+dc[d];
+                Queue<int[]> q = new LinkedList<>();
+                q.offer(new int[] {i, j});
+                while(!q.isEmpty()) {
+                    int[] curr = q.poll();
+                    arr[curr[0]][curr[1]] = islandNum;
 
-                            if(newR<0 || newR >=N || newC<0 || newC>=M) { continue; }
-                            if(visited[newR][newC] || arr[newR][newC]==0) { continue; }
-                            visited[newR][newC] = true;
-                            map[newR][newC] = islandNum;
-                            q.offer(new int[] {newR, newC});
-                        }
+                    for(int d=0; d<4; d++) {
+                        int newR = curr[0]+dr[d];
+                        int newC = curr[1]+dc[d];
+
+                        if(!isValid(newR, newC) || visited[newR][newC]) continue;
+                        if(arr[newR][newC] == 0)  continue;
+
+                        visited[newR][newC] = true;
+                        q.offer(new int[] {newR, newC});
                     }
-
                 }
             }
         }
     }
     static boolean isValid(int r, int c) {
-        if(r<0 || r>=N || c<0 || c>=M) {
-            return false;
-        }
-        return true;
+        return r>=0 && r<N && c>=0 && c<M;
     }
 }
