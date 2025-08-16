@@ -19,10 +19,11 @@ public class Main {
         for(int i=1; i<=N; i++) {
             tree[i] = new ArrayList<>();
         }
-        numOfChild = new int[N+1]; // 해당 노드를 포함해 자식 노드가 몇 개가 있는지 저장
+        numOfChild = new int[N+1];
         for(int i=1; i<=N; i++) {
             numOfChild[i] = 1;
         }
+
         for(int i=0; i<N-1; i++) {
             st = new StringTokenizer(br.readLine());
             int a = Integer.parseInt(st.nextToken());
@@ -42,8 +43,9 @@ public class Main {
     }
     static void traversal(int node, int parent) {
         for(int elem : tree[node]) {
-            if(elem == parent) continue;
-            traversal(elem, node);
+            if(elem != parent) {
+                traversal(elem, node);
+            }
         }
         if(parent != -1) {
             numOfChild[parent] += numOfChild[node];
