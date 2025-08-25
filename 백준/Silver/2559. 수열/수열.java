@@ -7,28 +7,28 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-
         int N = Integer.parseInt(st.nextToken());
         int K = Integer.parseInt(st.nextToken());
         int[] arr = new int[N];
         st = new StringTokenizer(br.readLine());
         for(int i=0; i<N; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
-        } // 초기화 완료
-
-        int max = Integer.MIN_VALUE;
-        int curr = 0;
+        }
+        int sum = 0;
         for(int i=0; i<K; i++) {
-            curr += arr[i];
+            sum += arr[i];
         }
-        max = Math.max(max, curr);
+        int max = sum;
 
-        for(int i=0, j=K; j<N; j++) {
-            curr -= arr[i++];
-            curr += arr[j];
-            max = Math.max(max, curr);
+        int left = 0;
+        int right = K-1;
+        while(right < N) {
+            sum -= arr[left++];
+            right++;
+            if(right >= N) break;
+            sum += arr[right];
+            max = Math.max(max, sum);
         }
-
         System.out.println(max);
 
     }
