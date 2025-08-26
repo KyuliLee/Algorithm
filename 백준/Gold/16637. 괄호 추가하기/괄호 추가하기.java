@@ -1,62 +1,54 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
-    static ArrayList<Integer> nums = new ArrayList<>();
-    static ArrayList<Character> ops = new ArrayList<>();
+    static int N;
+    static int[] nums;
+    static char[] ops;
     static int max = Integer.MIN_VALUE;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine());
+        nums = new int[(N+1)/2];
+        ops = new char[N/2];
         String str = br.readLine();
-        for(int i=0; i<str.length(); i++) {
-            char c = str.charAt(i);
-            if(c=='+' || c=='-' || c=='*') {
-                ops.add(c);
+        for(int i=0; i<N; i++) {
+            if(i%2==0) {
+                nums[i/2] = str.charAt(i)-'0';
             } else {
-                nums.add(c-'0');
+                ops[i/2] = str.charAt(i);
             }
         }
-        dfs(nums.get(0), 0);
+
+        dfs(0, nums[0]);
         System.out.println(max);
 
     }
-    static void dfs(int result, int opIdx) {
-        // 종료 조건
-        if(opIdx >= ops.size()) {
-            max = Math.max(max, result);
+    static void dfs(int here, int num) {
+        if(here == nums.length-1) {
+            max = Math.max(max, num);
             return;
         }
-        // 재귀
-        // 괄호 없는 경우 : 현재까지의 값(result)와 다음 숫자 연산
-        int num1 = cal(ops.get(opIdx), result, nums.get(opIdx+1));
-        dfs(num1, opIdx+1);
 
-        // 괄호 있는 경우 : 현재 값 다음 두 개의 숫자에 괄호를 친 값을 연산 후 현재 값과 연산
-        if(opIdx+1 < ops.size()) {
-            int num2 = cal(ops.get(opIdx+1), nums.get(opIdx+1), nums.get(opIdx+2));
-            int num3 = cal(ops.get(opIdx), result, num2);
-            dfs(num3, opIdx+2);
+        /*
+        가능한 경우의 수는 2가지 밖에 없음. 괄호가 있냐 없냐
+        3+8*7을 그대로 가는 경우 1개(괄호 없음), 3+(8*7) 인 경우 1개.
+         */
+        int res1 = cal(num, nums[here+1], ops[here]);
+        dfs(here+1, res1);
+
+        if(here+2 <= nums.length-1) {
+            int temp = cal(nums[here+1], nums[here+2], ops[here+1]);
+            int res2 = cal(num, temp, ops[here]);
+            dfs(here+2, res2);
         }
 
     }
-    static int cal(char op, int n1, int n2) {
-        int res = 0;
-        switch(op) {
-            case('+'): {
-                res = n1 + n2;
-                break;
-            }
-            case('-'): {
-                res = n1-n2;
-                break;
-            }
-            case('*'): {
-                res = n1*n2;
-            }
-        }
-        return res;
+    static int cal(int n1, int n2, char op) {
+        if(op == '+') return n1+n2;
+        if(op == '-') return n1-n2;
+        return n1*n2;
     }
 }
