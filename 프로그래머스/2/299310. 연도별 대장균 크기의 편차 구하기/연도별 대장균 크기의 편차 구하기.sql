@@ -1,0 +1,27 @@
+
+
+# 1. 연도별 대장균 크기의 최댓값 구하기 -> ecoli와 year를 기준으로 join
+select s1.YEAR, s2.MAX_SIZE - s1.SIZE_OF_COLONY AS YEAR_DEV, s1.ID
+    from (
+        select *, YEAR(DIFFERENTIATION_DATE) AS YEAR
+        from ECOLI_DATA
+        ) AS s1
+    join (
+        SELECT MAX(SIZE_OF_COLONY) AS MAX_SIZE, YEAR(DIFFERENTIATION_DATE) AS YEAR
+        FROM ECOLI_DATA
+        GROUP BY YEAR(DIFFERENTIATION_DATE)
+        ) AS s2
+    ON s1.YEAR = s2.YEAR
+    ORDER BY s1.YEAR ASC, YEAR_DEV ASC
+
+
+    # SELECT MAX(SIZE_OF_COLONY) AS MAX_SIZE, YEAR(DIFFERENTIATION_DATE) AS YEAR
+    # FROM ECOLI_DATA
+    # GROUP BY YEAR(DIFFERENTIATION_DATE)
+
+# # 2. 해당 연도의 max_size값에서 해당 튜플의 사이즈 빼기
+# SELECT SUB.MAX_SIZE - SIZE_OF_COLONY
+# FROM ECOLI_DATA
+
+
+
