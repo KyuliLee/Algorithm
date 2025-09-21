@@ -1,2 +1,2 @@
-SELECT CONCAT(MAX(LENGTH), "cm") AS MAX_LENGTH
-FROM FISH_INFO
+select concat(max(length), 'cm') AS MAX_LENGTH
+from fish_info
