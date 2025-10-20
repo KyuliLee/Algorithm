@@ -1,31 +1,70 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String S = br.readLine();
-        int len = S.length();
-        char[] charArr = S.toCharArray();
-        // String을 set에 넣기
-        Set<String> set = new HashSet<>();
-        int ans = 0;
-        for(int s=0; s<len; s++) {
-            StringBuilder sb = new StringBuilder();
-            for(int e=s; e<len; e++) {
-                // charArr[s]부터 charArr[e]까지의 char로 String을 만드는데 +로 만들면 시간초과날 듯
-                sb.append(charArr[e]);
-                String str = new String(sb);
-                if(!set.contains(str)) {
-                    set.add(str);
-                    ans++;
+    static class SAM {
+        // 최대 상태 수: 2 * n
+        int[][] next;
+        int[] link, len;
+        int size, last;
+
+        SAM(int n) {
+            next = new int[2 * n][26];
+            for (int i = 0; i < 2 * n; i++) Arrays.fill(next[i], -1);
+            link = new int[2 * n];
+            len = new int[2 * n];
+            Arrays.fill(link, -1);
+            size = 1; // root = 0
+            last = 0;
+        }
+
+        void extend(int c) {
+            int cur = size++;
+            len[cur] = len[last] + 1;
+            int p = last;
+
+            while (p != -1 && next[p][c] == -1) {
+                next[p][c] = cur;
+                p = link[p];
+            }
+
+            if (p == -1) {
+                link[cur] = 0;
+            } else {
+                int q = next[p][c];
+                if (len[p] + 1 == len[q]) {
+                    link[cur] = q;
+                } else {
+                    int clone = size++;
+                    System.arraycopy(next[q], 0, next[clone], 0, 26);
+                    len[clone] = len[p] + 1;
+                    link[clone] = link[q];
+                    while (p != -1 && next[p][c] == q) {
+                        next[p][c] = clone;
+                        p = link[p];
+                    }
+                    link[q] = link[cur] = clone;
                 }
             }
+            last = cur;
         }
-        System.out.println(ans);
 
+        long countDistinctSubstrings() {
+            long res = 0;
+            for (int v = 1; v < size; v++) {
+                res += (long) (len[v] - len[link[v]]);
+            }
+            return res;
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String S = br.readLine().trim();
+        SAM sam = new SAM(S.length());
+        for (int i = 0; i < S.length(); i++) {
+            sam.extend(S.charAt(i) - 'a');
+        }
+        System.out.println(sam.countDistinctSubstrings());
     }
 }
